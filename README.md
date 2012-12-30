@@ -59,4 +59,4 @@ $('.editable-area').editable(function(data) {
 
 1. Add more options
 2. Make the styling of the textarea look better on none-webkit browsers
-3. Integrate with an wysiwyg-editor
+3. Integrate with a wysiwyg-editor
