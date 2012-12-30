@@ -2,7 +2,7 @@
 
 This plugin makes it possible edit the text/html of an element with a single click.
 
-```
+```js
 $('#some-element').editable(); // Makes it editable on double click
 
 $('#some-element').editable(function(data) {}); // Add callback with info about potentially changed text and font size
