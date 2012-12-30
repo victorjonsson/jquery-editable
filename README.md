@@ -1,20 +1,41 @@
 # jquery.editable
 
-This plugin makes it possible edit the text/html of an element with a single click.
+This plugin makes it possible to edit the content of an element simply by double clicking on it. 
+
+#### Features
+
+- Lorem te ipsum
+- Lorem te ipsum del tara
+- Mia tendo del tara
+
+
+#### Code examples
 
 ```js
-// Makes element editable by double clicking on it
+// Make the element editable by double clicking on it
 $('#some-element').editable(); 
 
-// Add callback with info about potentially changed text and font size
-$('#some-element').editable(function(data) {}); 
+// Here we have added a callback that will get info about 
+// potentially changed text and font size when the textarea
+// gets blurred
+$('#some-element').editable(function(data) { }); 
 
-// Changes the event trigger from double click to ordinary click
+// The second arguments is used to define which event that 
+// should create the text editor (default is dblclick)
 $('#some-element').editable(function(data) { }, 'click'); 
 
-// Removes the text editor
+// Here's how to remove the event listener that creates 
+// the text editor
 $('#some-element').editable( 'destroy' ); 
 
-// Listen to when a elements gets edited
+// Here's how to listen to if an  elements gets edited
 $('#some-element').on('edit', function(event, $textArea) { }); 
+```
+
+### The callback function
+
+The first argument of the callback functino is an object containing the following properties:
+
+```
+
 ```
