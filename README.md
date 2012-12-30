@@ -2,11 +2,12 @@
 
 This plugin makes it possible to edit the content of an element simply by double clicking on it. 
 
-#### Features
+#### How does it work
 
-- Lorem te ipsum
-- Lorem te ipsum del tara
-- Mia tendo del tara
+Dobule click on an element and it turns into a textarea. The content of the element is now displayed in the textarea. 
+When your'e done with your editing all you have to do is to click some where outside the textarea and the content will
+be added to the DOM. If you press the keys cmd + &uarr;
+
 
 
 #### Code examples
