@@ -5,9 +5,9 @@ This plugin makes it possible to edit the content of an element simply by double
 ## How does it work
 
 Dobule click on an element and it turns into a textarea. The content of the element is now displayed in the textarea. 
-When your'e done with your editing all you have to do is to click some where outside the textarea and the content will
-be added to the DOM. You can toggle the size of the font by  cmd + &uarr; or cmd + &darr; while editing the content 
-(ctrl key instead of cmd if you're on windows).
+When you're done with your editing all you have to do is to click some where outside the textarea and the content will
+be added to the DOM. You can toggle the size of the font by pressing the keys cmd + &uarr; or cmd + &darr; while editing the content 
+(ctrl-key instead of cmd if you're on windows).
 
 
 #### Code examples
