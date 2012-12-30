@@ -29,7 +29,8 @@ $('#some-element').editable(function(data) { }, 'click');
 // the text editor
 $('#some-element').editable( 'destroy' ); 
 
-// Here's how to listen to if an  elements gets edited
+// Binding an event listener that's triggered when the
+// element gets edited
 $('#some-element').on('edit', function(event, $textArea) { }); 
 ```
 
