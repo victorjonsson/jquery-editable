@@ -2,12 +2,12 @@
 
 This plugin makes it possible to edit the content of an element simply by double clicking on it. 
 
-#### How does it work
+## How does it work
 
 Dobule click on an element and it turns into a textarea. The content of the element is now displayed in the textarea. 
 When your'e done with your editing all you have to do is to click some where outside the textarea and the content will
-be added to the DOM. If you press the keys cmd + &uarr;
-
+be added to the DOM. You can toggle the size of the font by  cmd + &uarr; or cmd + &darr; while editing the content 
+(ctrl key instead of cmd if you're on windows).
 
 
 #### Code examples
@@ -33,10 +33,30 @@ $('#some-element').editable( 'destroy' );
 $('#some-element').on('edit', function(event, $textArea) { }); 
 ```
 
-### The callback function
+## The callback function
 
-The first argument of the callback functino is an object containing the following properties:
+The first argument of the callback function is an object containing the following properties:
 
+- **text** — Either false or the new text if the text was changed (this text may contain HTML)
+- **fontSize** — Either false or the new font size, if changed.
+- **$el** - Reference to the element (jQuery) that was edited
+
+
+#### Code example
+
+```js
+$('.editable-area').editable(function(data) {
+  if( data.text ) {
+    $('input[name="' +$(this).attr('data-input')+'_text"]').val(data.text);
+  }
+  if( data.fontSize ) {
+      $('input[name="' +$(this).attr('data-input')+'_fontsize"]').val(data.fontSize);
+  } 
+});
 ```
 
-```
+## Roadmap
+
+1. Add more options
+2. Make the styling of the textarea look better on none-webkit browsers
+3. Integrate with an wysiwyg-editor
