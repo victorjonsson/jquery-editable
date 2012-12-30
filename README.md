@@ -36,7 +36,7 @@ $('#some-element').on('edit', function(event, $textArea) { });
 
 ## The callback function
 
-The first argument of the callback function is an object containing the following properties:
+The first argument passed along to the callback function is an object containing the following properties:
 
 - **text** — Either false or the new text if the text was changed (this text may contain HTML)
 - **fontSize** — Either false or the new font size, if changed.
