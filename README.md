@@ -59,5 +59,6 @@ $('.editable-area').editable(function(data) {
 ## Roadmap
 
 1. Add more options
-2. Make the styling of the textarea look better on none-webkit browsers
-3. Integrate with a wysiwyg-editor
+2. Support touch
+3. Make the styling of the textarea look better on none-webkit browsers
+4. Integrate with a wysiwyg-editor
