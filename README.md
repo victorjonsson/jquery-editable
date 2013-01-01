@@ -2,6 +2,8 @@
 
 This plugin makes it possible to edit the content of an element simply by double clicking on it. 
 
+[Click here to try the live example](http://victorjonsson.se/168/jquery-editable)
+
 ## How does it work?
 
 Dobule click on an element and it turns into a textarea. The content of the element is now displayed in the textarea. 
