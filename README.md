@@ -2,7 +2,7 @@
 
 This plugin makes it possible to edit the content of an element simply by double clicking on it. 
 
-[Click here to try the live example](http://victorjonsson.se/168/jquery-editable)
+[Live example can be viewed here](http://victorjonsson.se/168/jquery-editable/?from=github)
 
 ## How does it work?
 
