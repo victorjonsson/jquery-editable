@@ -1,5 +1,5 @@
 /*
-* jQuery plugin that makes any element on your page editable
+* jQuery plugin that makes elements editable
 * 
 * @author Victor Jonsson (http://victorjonsson.se/)
 * @website https://github.com/victorjonsson/jquery-editable/
@@ -35,14 +35,6 @@
     },
 
     /**
-     * @param {jQuery} $el
-     * @return {Boolean}
-     */
-    isEditing = function($el) {
-        return $el.attr(IS_EDITING_ATTR) !== undefined;
-    },
-
-    /**
      * Event listener that largens font size
      */
     fontSizeToggler = function(e) {
@@ -55,24 +47,13 @@
     },
 
     /**
-     * Adjusts the height of the text area to remove scroll
+     * Adjusts the height of the textarea to remove scroll
+     * @todo This way of doing it does not make the textarea smaller when the number of text lines gets smaller
      */
     adjustTextAreaHeight = function() {
         if( $textArea[0].scrollHeight !== parseInt($textArea.attr('data-scroll'), 10) ) {
-            var $tmpArea = $textArea.clone(false);
-            $tmpArea
-                .val($textArea.val())
-                .css({
-                    position: 'absolute',
-                    visibility : 'hidden',
-                    top :0,
-                    left : 0
-                })
-                .appendTo('body');
-
-            $textArea.css('height', $tmpArea[0].scrollHeight +'px');
+            $textArea.css('height', $textArea[0].scrollHeight +'px');
             $textArea.attr('data-scroll', $textArea[0].scrollHeight);
-            $tmpArea.remove();
         }
     },
 
@@ -132,7 +113,7 @@
                 $win.unbind('keydown', fontSizeToggler);
                 $win.unbind('keyup', adjustTextAreaHeight);
 
-                // Run callback i defined
+                // Run callback
                 if( typeof opts.callback == 'function' ) {
                     opts.callback({
                         content : newText == defaultText ? false : newText,
@@ -164,22 +145,20 @@
     };
 
     /**
-     * Jquery plugin
+     * Jquery plugin that makes elments editable
      * @param {Object|String} [opts] Either callback function or the string 'destroy' if wanting to remove the editor event
      * @return {jQuery|Boolean}
      */
     $.fn.editable = function(opts) {
 
         if(typeof opts == 'string') {
-            var event = this.attr(EVENT_ATTR);
-            var enabled = event !== undefined;
 
-            if( enabled ) {
+            if( this.is(':editable') ) {
 
                 switch (opts) {
                     case 'open':
                         if( !this.is(':editing') ) {
-                            this.trigger(event);
+                            this.trigger(this.attr(EVENT_ATTR));
                         }
                         break;
                     case 'close':
@@ -191,7 +170,7 @@
                         if( this.is(':editing') ) {
                             this.trigger('blur');
                         }
-                        this.unbind(event);
+                        this.unbind(this.attr(EVENT_ATTR));
                         this.removeAttr(EVENT_ATTR);
                         break;
                     default:
