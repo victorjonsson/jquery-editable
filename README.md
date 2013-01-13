@@ -39,10 +39,14 @@ $('#some-element').editable({
     }
 });
 
-// Once having initiated the editor you can call the following commands
-
+// Call "open" to programatically turn an editable element into an editor
 $('#some-element').editable('open');
+
+// Call "close" to programatically close the editor for en element 
+// that's being edited
 $('#some-element').editable('close');
+
+// Call "destroy" to remove the possibility to edit an element
 $('#some-element').editable('destroy');
 
 // You can use $.is() to tell whether or not an element is editable or at
