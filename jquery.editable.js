@@ -179,12 +179,15 @@
                         console.warn('Unknown command "'+opts+'" for jquery.editable');
                 }
 
+            } else {
+                console.error('Calling .editable() on an element that is not editable, call .editable() first');
             }
         }
         else {
 
             if( this.is(':editable') ) {
                 console.warn('Making an already editable element editable, call .editable("destroy") first');
+                this.editable('destroy');
             }
 
             opts = $.extend(opts, {
