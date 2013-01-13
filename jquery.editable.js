@@ -9,6 +9,8 @@
 */
 (function($) {
 
+    'use strict';
+
     var $win = $(window), // Reference to window
 
     // Reference to textarea
