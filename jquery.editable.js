@@ -4,14 +4,43 @@
 * @author Victor Jonsson (http://victorjonsson.se/)
 * @website https://github.com/victorjonsson/jquery-editable/
 * @license Dual licensed under the MIT or GPL Version 2 licenses
-* @version 1.0
+* @version 1.1
 * @donations http://victorjonsson.se/donations/
 */
 (function($) {
 
     var $win = $(window), // Reference to window
 
-    $textArea = false, // Reference to textarea
+    // Reference to textarea
+    $textArea = false,
+
+    // Some constants
+    EVENT_ATTR = 'data-edit-event',
+    IS_EDITING_ATTR = 'data-is-editing',
+    DBL_TAP_EVENT = 'dbltap',
+
+    // reference to old is function
+    oldjQueryIs = $.fn.is,
+
+    /*
+     * Function responsible of triggering double tap event
+     */
+    lastTap = 0,
+    tapper = function() {
+        var now = new Date().getTime();
+        if( (now-lastTap) < 250 ) {
+            $(this).trigger(DBL_TAP_EVENT);
+        }
+        lastTap = now;
+    },
+
+    /**
+     * @param {jQuery} $el
+     * @return {Boolean}
+     */
+    isEditing = function($el) {
+        return $el.attr(IS_EDITING_ATTR) !== undefined;
+    },
 
     /**
      * Event listener that largens font size
@@ -21,9 +50,14 @@
             var fontSize = parseInt($textArea.css('font-size'), 10);
             fontSize += e.keyCode == 40 ? -1 : 1;
             $textArea.css('font-size', fontSize+'px');
+            return false;
         }
+    },
 
-        // Change height of textarea
+    /**
+     * Adjusts the height of the text area to remove scroll
+     */
+    adjustTextAreaHeight = function() {
         if( $textArea[0].scrollHeight !== parseInt($textArea.attr('data-scroll'), 10) ) {
             var $tmpArea = $textArea.clone(false);
             $tmpArea
@@ -45,17 +79,23 @@
     /**
      * Function creating editor
      */
-    elementEditor = function($el, callback) {
+    elementEditor = function($el, opts) {
 
-        if( $el.attr('data-is-editing') !== undefined)
+        if( $el.is(':editing') )
             return;
 
         $el.attr('data-is-editing', '1');
 
-        var defaultText = $.trim( $el.html() ).replace(/<br( |)(|\/)>/g, '\n'),
+        var defaultText = $.trim( $el.html() ),
             defaultFontSize = $el.css('font-size'),
-            elementHeight = $el.outerHeight(),
-            textareaStyle = 'width: 96%; padding: 2%; margin:8px 0';
+            elementHeight = $el.height(),
+            textareaStyle = 'width: 96%; padding:0; margin:0; border:0; background:none;'+
+                            'font-family: '+$el.css('font-family')+'; font-size: '+$el.css('font-size')+';'+
+                            'font-weight: '+$el.css('font-weight')+';';
+
+        if( opts.lineBreaks ) {
+            defaultText = defaultText.replace(/<br( |)(|\/)>/g, '\n');
+        }
 
         $textArea = $('<textarea></textarea>');
         $el.text('');
@@ -64,22 +104,38 @@
             textareaStyle = document.defaultView.getComputedStyle($el.get(0), "").cssText;
         }
 
-        $win.bind('keydown', fontSizeToggler);
+        if( opts.toggleFontSize ) {
+            $win.bind('keydown', fontSizeToggler);
+        }
+        $win.bind('keyup', adjustTextAreaHeight);
 
         $textArea
             .val(defaultText)
             .blur(function() {
-                var newText = $.trim( $textArea.val() ).replace(new RegExp('\n','g'), '<br />'),
-                    newFontSize = $textArea.css('font-size');
 
+                // Get new text and font size
+                var newText = $.trim( $textArea.val() ),
+                    newFontSize = $textArea.css('font-size');
+                if( opts.lineBreaks ) {
+                    newText = newText.replace(new RegExp('\n','g'), '<br />');
+                }
+
+                // Update element
                 $el.html( newText );
                 $el.removeAttr('data-is-editing');
+                if( newFontSize != defaultFontSize ) {
+                    $el.css('font-size', newFontSize);
+                }
+
+                // remove textarea and size toggles
                 $textArea.remove();
                 $win.unbind('keydown', fontSizeToggler);
+                $win.unbind('keyup', adjustTextAreaHeight);
 
-                if( typeof callback == 'function' ) {
-                    callback({
-                        text : newText == defaultText ? false : newText,
+                // Run callback i defined
+                if( typeof opts.callback == 'function' ) {
+                    opts.callback({
+                        content : newText == defaultText ? false : newText,
                         fontSize : newFontSize == defaultFontSize ? false : newFontSize,
                         $el : $el
                     });
@@ -87,7 +143,12 @@
             })
             .attr('style', textareaStyle)
             .appendTo($el)
-            .css('height', elementHeight +'px')
+            .css({
+                margin: 0,
+                padding: 0,
+                height : elementHeight +'px',
+                overflow : 'hidden'
+            })
             .focus()
             .get(0).select();
 
@@ -98,28 +159,90 @@
      * Event listener
      */
     editEvent = function(event) {
-        elementEditor($(this), event.data.callback);
+        elementEditor($(this), event.data);
         return false;
     };
 
     /**
      * Jquery plugin
-     * @param {Function|String} [callback] Either callback function or the string 'destroy' if wanting to remove the editor event
-     * @param {String} [evt] Defaults to 'dblclick'
-     * @return {jQuery}
+     * @param {Object|String} [opts] Either callback function or the string 'destroy' if wanting to remove the editor event
+     * @return {jQuery|Boolean}
      */
-    $.fn.editable = function(callback, evt) {
-        if( !evt )
-            evt = 'dblclick';
+    $.fn.editable = function(opts) {
 
-        evt += '.textEditor';
+        if(typeof opts == 'string') {
+            var event = this.attr(EVENT_ATTR);
+            var enabled = event !== undefined;
 
-        if( callback === 'destroy' ) {
-            return this.unbind(evt);
+            if( enabled ) {
+
+                switch (opts) {
+                    case 'open':
+                        if( !this.is(':editing') ) {
+                            this.trigger(event);
+                        }
+                        break;
+                    case 'close':
+                        if( this.is(':editing') ) {
+                            this.trigger('blur');
+                        }
+                        break;
+                    case 'destroy':
+                        if( this.is(':editing') ) {
+                            this.trigger('blur');
+                        }
+                        this.unbind(event);
+                        this.removeAttr(EVENT_ATTR);
+                        break;
+                    default:
+                        console.warn('Unknown command "'+opts+'" for jquery.editable');
+                }
+
+            }
         }
         else {
-            return this.bind(evt, {callback: callback}, editEvent);
+
+            if( this.is(':editable') ) {
+                console.warn('Making an already editable element editable, call .editable("destroy") first');
+            }
+
+            opts = $.extend(opts, {
+                event : 'dblclick',
+                touch : true,
+                lineBreaks : true,
+                toggleFontSize : true
+            });
+
+            if( 'ontouchend' in window && opts.touch ) {
+                opts.event = DBL_TAP_EVENT;
+                this.unbind('touchend', tapper);
+                this.bind('touchend', tapper);
+            }
+            else {
+                opts.event += '.textEditor';
+            }
+
+            this.bind(opts.event, opts, editEvent);
+            this.attr(EVENT_ATTR, opts.event);
         }
+
+        return this;
     };
+
+    /**
+     * Add :editable :editing to $.is()
+     * @param {Object} statement
+     * @return {*}
+     */
+    $.fn.is = function(statement) {
+        if( typeof statement == 'string' && statement.indexOf(':') === 0) {
+            if( statement == ':editable' ) {
+                return this.attr(EVENT_ATTR) !== undefined;
+            } else if( statement == ':editing' ) {
+                return this.attr(IS_EDITING_ATTR) !== undefined;
+            }
+        }
+        return oldjQueryIs.apply(this, arguments);
+    }
 
 })(jQuery);

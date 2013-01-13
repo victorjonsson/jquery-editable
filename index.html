@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+    <title>jQuery Editable - Example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <meta charset="utf-8" />
+    <style>
+
+        * {
+            font-family: "Helvetica Neue Light", Helvetica, sans-serif;
+            font-size: 15px;
+            line-height: 1.4;
+            color: #444;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #F2F2F2;
+        }
+
+        textarea {
+            font-family: Courier, serif;
+        }
+
+        #container {
+            max-width: 540px;
+            padding: 0 20px;
+            margin: 20px auto;
+            background: #FFF;
+        }
+
+        p {
+            padding: 16px 0;
+        }
+
+        em {
+            font-size: 80%;
+            color: #888;
+        }
+
+        h2 {
+            font-family: Tahoma, sans-serif;
+            font-size: 20px;
+        }
+
+        button {
+            padding: 5px;
+            margin-right: 5px;
+            line-height: normal;
+        }
+
+        hr {
+            margin: 10px 0;
+        }
+
+        #log {
+            width: 98%;
+            padding: 1%;
+            color: #777;
+            font-size: 80%;
+            height: 80px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="container">
+        <p id="info">
+            <em>Double click/tap on the paragraph below to edit</em>
+            <em style="display: none">ctr | cmd + &uarr;/&darr; to change font size</em>
+        </p>
+        <div>
+            <h2 class="editable">Lorem te ipsum del tara sinco</h2>
+            <p class="editable">
+                Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.
+            </p>
+            <p class="editable">
+                The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.
+            </p>
+        </div>
+
+        <hr />
+        <p>
+            <button id="h2Button">Start edit h2</button>
+            <button id="removeButton">Remove editable feature</button>
+        </p>
+
+        <p>
+            <em>Log:</em><br />
+            <textarea id="log"></textarea>
+        </p>
+    </div>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="jquery.editable.js"></script>
+    <script>
+
+        // Define our elements
+        var $log = $('#log').val('');
+        var $editables = $('.editable');
+        var $info = $('#info em');
+
+        /**
+         * Log a text message
+         * @param {String} txt
+         */
+        function log(txt) {
+            var val = $log.val();
+            if(val)
+                val += '\n';
+            val += txt;
+            $log.val( val );
+            $log.scrollTop( $log[0].scrollHeight - $log.height() );
+        }
+
+        /**
+         * Make the elements editable
+         */
+        function makeThingsEditable() {
+            $editables.editable({
+                callback : function( data ) {
+                    $info.hide();
+                    $info.eq(0).show();
+                    log('Stopped editing ' + data.$el[0].nodeName );
+                    if( data.content )
+                        log('   * The text was changed');
+                    if( data.fontSize )
+                        log('   * Font size was changed to '+data.fontSize);
+                }
+            });
+            log('jQuery Editable - initiated');
+        }
+
+        // Listen on when elements getting edited
+        $editables.on('edit', function( $textArea ) {
+            $info.hide();
+            $info.eq(1).show();
+            log('Started editing element '+ this.nodeName);
+        });
+
+
+        // Button that starts the editing of the h2 element
+        $('#h2Button').click(function() {
+            $('h2').editable('open');
+        });
+
+
+        // Button that toggles the editable feature
+        $('#removeButton').click(function() {
+            if( $editables.is(':editable') ) {
+                $editables.editable('destroy');
+                this.innerHTML = 'Make elements editable again';
+                log('Remove editable feature');
+            } else {
+                makeThingsEditable();
+                this.innerHTML = 'Remove editable feature';
+            }
+        });
+
+        // Let's go!
+        makeThingsEditable();
+
+    </script>
+
+</body>

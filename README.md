@@ -6,7 +6,7 @@ This plugin makes it possible to edit the content of an element simply by double
 
 ## How does it work?
 
-Dobule click on an element and it turns into a textarea. The content of the element is now displayed in the textarea. 
+Double click on an element and it turns into a textarea. The content of the element is now displayed in the textarea.
 When you're done editing all you have to do is to click some where outside the textarea and the content will
 be added to the DOM. You can toggle the size of the font by pressing the keys cmd + &uarr; or cmd + &darr; while editing the content 
 (ctrl-key instead of cmd if you're on windows).
@@ -18,18 +18,42 @@ be added to the DOM. You can toggle the size of the font by pressing the keys cm
 // Make the element editable by double clicking on it
 $('#some-element').editable(); 
 
-// Here we have added a callback that will get info about 
-// potentially changed text and font size when the textarea
-// gets blurred
-$('#some-element').editable(function(data) { }); 
+// There are some options you can configure when initiating
+// the editable feature as well as a callback function that
+// will be called when textarea gets blurred.
+$('#some-element').editable({
+    touch : true, // Whether or not to support touch (default is true)
+    lineBreaks : true, // Whether or not to convert \n to <br /> (default is true)
+    event : 'click', // The event that triggers the editor
+    callback : function( data ) {
+        // Callback that will be called once the editor is blurred
+        if( data.content ) {
+            // Content has changed...
+        }
+        if( data.fontSize ) {
+            // the font size is changed
+        }
 
-// The second arguments is used to define which event that 
-// should create the text editor (default is dblclick)
-$('#some-element').editable(function(data) { }, 'click'); 
+        // data.$el gives you a reference to the element that was edited
+        data.$el.effect('blink');
+    }
+});
 
-// Here's how to remove the event listener that creates 
-// the text editor
-$('#some-element').editable( 'destroy' ); 
+// Once having initiated the editor you can call the following commands
+
+$('#some-element').editable('open');
+$('#some-element').editable('close');
+$('#some-element').editable('destroy');
+
+// You can use $.is() to tell whether or not an element is editable or at
+// the moment being edited
+var $elem = $('#some-element');
+if( $elem.is(':editing') ) {
+    // It's being edited right now, lets do stuff...
+}
+if( $elem.is(':editable') ) {
+    // It's editable, lets do stuff...
+}
 
 // Binding an event listener that's triggered when the
 // element gets edited
@@ -38,7 +62,7 @@ $('#some-element').on('edit', function(event, $textArea) { });
 
 ## The callback function
 
-The first argument passed along to the callback function is an object containing the following properties:
+The first argument of the callback function is an object containing the following properties:
 
 - **text** — Either false or the new text if the text was changed (this text may contain HTML)
 - **fontSize** — Either false or the new font size, if changed.
@@ -57,10 +81,3 @@ $('.editable-area').editable(function(data) {
   } 
 });
 ```
-
-## Roadmap
-
-1. Add more options
-2. Support touch
-3. Make the styling of the textarea look better on none-webkit browsers
-4. Integrate with a wysiwyg-editor
