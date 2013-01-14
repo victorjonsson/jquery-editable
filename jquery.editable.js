@@ -135,6 +135,8 @@
             .focus()
             .get(0).select();
 
+            adjustTextAreaHeight();
+
             $el.trigger('edit', [$textArea]);
     },
 
