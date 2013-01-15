@@ -20,6 +20,7 @@
     EVENT_ATTR = 'data-edit-event',
     IS_EDITING_ATTR = 'data-is-editing',
     DBL_TAP_EVENT = 'dbltap',
+    SUPPORTS_TOUCH = 'ontouchend' in window,
 
     // reference to old is function
     oldjQueryIs = $.fn.is,
@@ -199,7 +200,7 @@
                 toggleFontSize : true
             }, opts);
 
-            if( 'ontouchend' in window && opts.touch ) {
+            if( SUPPORTS_TOUCH && opts.touch ) {
                 opts.event = DBL_TAP_EVENT;
                 this.unbind('touchend', tapper);
                 this.bind('touchend', tapper);
