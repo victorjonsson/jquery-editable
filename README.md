@@ -24,6 +24,7 @@ $('#some-element').editable();
 $('#some-element').editable({
     touch : true, // Whether or not to support touch (default is true)
     lineBreaks : true, // Whether or not to convert \n to <br /> (default is true)
+    toggleFontSize : true // Whether or not it should be possible to change font size (defualt true)
     event : 'click', // The event that triggers the editor
     callback : function( data ) {
         // Callback that will be called once the editor is blurred
@@ -39,15 +40,6 @@ $('#some-element').editable({
     }
 });
 
-// Call "open" to programatically turn an editable element into an editor
-$('#some-element').editable('open');
-
-// Call "close" to programatically close the editor for en element 
-// that's being edited
-$('#some-element').editable('close');
-
-// Call "destroy" to remove the possibility to edit an element
-$('#some-element').editable('destroy');
 
 // You can use $.is() to tell whether or not an element is editable or at
 // the moment being edited
@@ -58,6 +50,17 @@ if( $elem.is(':editing') ) {
 if( $elem.is(':editable') ) {
     // It's editable, lets do stuff...
 }
+
+// Call "open" to programatically turn an editable element into an editor
+$('#some-element').editable('open');
+
+// Call "close" to programatically close the editor for an element 
+// that's currently being edited
+$('#some-element').editable('close');
+
+// Call "destroy" to remove the possibility to edit an element
+$('#some-element').editable('destroy');
+
 
 // Binding an event listener that's triggered when the
 // element gets edited
