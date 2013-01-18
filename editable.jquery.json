@@ -1,0 +1,27 @@
+{
+    "name" : "editable",
+    "title" : "jQuery Editable",
+    "description" : "This plugin makes it possible to edit the content of an element simply by double clicking on it.",
+    "keywords": [
+        "form",
+        "ui",
+        "wysiwyg"
+    ],
+    "version" : "1.2.0",
+    "author" : {
+        "name": "Victor Jonsson",
+        "url": "http://victorjonsson.se/",
+        "email" : "kontakt@victorjonsson.se"
+    },
+    "homepage" : "https://github.com/victorjonsson/jquery-editable",
+    "demo" : "http://victorjonsson.se/168/jquery-editable/?from=jQuery",
+    "download" : "https://raw.github.com/victorjonsson/jquery-editable/master/jquery.editable.min.js",
+    "bugs" : "https://github.com/victorjonsson/jquery-editable/issues",
+    "licenses" : [{
+        "type": "GPLv2",
+        "url": "http://www.gnu.org/licenses/gpl-2.0.html"
+    }],
+    "dependencies" : {
+        "jquery": ">=1.5"
+    }
+}
