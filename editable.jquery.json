@@ -5,9 +5,10 @@
     "keywords": [
         "form",
         "ui",
-        "wysiwyg"
+        "wysiwyg",
+        "input"
     ],
-    "version" : "1.2.0",
+    "version" : "1.2.1",
     "author" : {
         "name": "Victor Jonsson",
         "url": "http://victorjonsson.se/",

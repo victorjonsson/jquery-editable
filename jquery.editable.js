@@ -4,7 +4,7 @@
 * @author Victor Jonsson (http://victorjonsson.se/)
 * @website https://github.com/victorjonsson/jquery-editable/
 * @license GPLv2 http://www.gnu.org/licenses/gpl-2.0.html
-* @version 1.2.0
+* @version 1.2.1
 * @donations http://victorjonsson.se/donations/
 */
 (function($) {
