@@ -15,6 +15,9 @@
 
     // Reference to textarea
     $textArea = false,
+    
+    // Reference to currently edit element
+    $currentlyEdited = false,
 
     // Some constants
     EVENT_ATTR = 'data-edit-event',
@@ -68,6 +71,7 @@
         if( $el.is(':editing') )
             return;
 
+        $currentlyEdited = $el;
         $el.attr('data-is-editing', '1');
 
         var defaultText = $.trim( $el.html() ),
@@ -97,6 +101,8 @@
             .val(defaultText)
             .blur(function() {
 
+                $currentlyEdited = false;
+                
                 // Get new text and font size
                 var newText = $.trim( $textArea.val() ),
                     newFontSize = $textArea.css('font-size');
@@ -145,7 +151,16 @@
      * Event listener
      */
     editEvent = function(event) {
-        elementEditor($(this), event.data);
+        if( $currentlyEdited !== false ) {
+            // Not closing the currently open editor before opening a new
+            // editor makes things go crazy
+            $currentlyEdited.editable('close');
+            var $this = $(this);
+            elementEditor($this, event.data);
+        }
+        else {
+            elementEditor($(this), event.data);            
+        }
         return false;
     };
 
@@ -210,7 +225,7 @@
             }
 
             this.bind(opts.event, opts, editEvent);
-            this.attr(EVENT_ATTR, opts.event);
+            this.attr(EVENT_ATTR, opts.event);            
         }
 
         return this;
