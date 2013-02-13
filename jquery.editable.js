@@ -4,7 +4,7 @@
 * @author Victor Jonsson (http://victorjonsson.se/)
 * @website https://github.com/victorjonsson/jquery-editable/
 * @license GPLv2 http://www.gnu.org/licenses/gpl-2.0.html
-* @version 1.2.2
+* @version 1.2.3
 * @donations http://victorjonsson.se/donations/
 */
 (function($) {
@@ -43,8 +43,11 @@
     /**
      * Event listener that largens font size
      */
-    fontSizeToggler = function(e) {
-        if(e.metaKey && (e.keyCode == 38 || e.keyCode == 40)) {
+    keyHandler = function(e) {
+        if( e.keyCode == 13 && e.data.closeOnEnter ) {
+            $currentlyEdited.editable('close');
+        }
+        else if( e.data.toggleFontSize && (e.metaKey && (e.keyCode == 38 || e.keyCode == 40)) ) {
             var fontSize = parseInt($textArea.css('font-size'), 10);
             fontSize += e.keyCode == 40 ? -1 : 1;
             $textArea.css('font-size', fontSize+'px');
@@ -88,12 +91,12 @@
         $textArea = $('<textarea></textarea>');
         $el.text('');
 
-        if( $.browser.webkit ) {
+        if( navigator.userAgent.match(/webkit/i) !== null ) {
             textareaStyle = document.defaultView.getComputedStyle($el.get(0), "").cssText;
         }
 
-        if( opts.toggleFontSize ) {
-            $win.bind('keydown', fontSizeToggler);
+        if( opts.toggleFontSize || opts.closeOnEnter ) {
+            $win.bind('keydown', opts, keyHandler);
         }
         $win.bind('keyup', adjustTextAreaHeight);
 
@@ -119,7 +122,7 @@
 
                 // remove textarea and size toggles
                 $textArea.remove();
-                $win.unbind('keydown', fontSizeToggler);
+                $win.unbind('keydown', keyHandler);
                 $win.unbind('keyup', adjustTextAreaHeight);
 
                 // Run callback
@@ -212,7 +215,8 @@
                 event : 'dblclick',
                 touch : true,
                 lineBreaks : true,
-                toggleFontSize : true
+                toggleFontSize : true,
+                closeOnEnter : false
             }, opts);
 
             if( SUPPORTS_TOUCH && opts.touch ) {

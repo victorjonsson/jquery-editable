@@ -22,10 +22,11 @@ $('#some-element').editable();
 // the editable feature as well as a callback function that
 // will be called when textarea gets blurred.
 $('#some-element').editable({
-    touch : true, // Whether or not to support touch (default is true)
-    lineBreaks : true, // Whether or not to convert \n to <br /> (default is true)
-    toggleFontSize : true // Whether or not it should be possible to change font size (defualt true)
-    event : 'click', // The event that triggers the editor
+    touch : true, // Whether or not to support touch (default true)
+    lineBreaks : true, // Whether or not to convert \n to <br /> (default true)
+    toggleFontSize : true, // Whether or not it should be possible to change font size (default true),
+    closeOnError : false, // Whether or not pressing the enter key should close the editor (default false)
+    event : 'click', // The event that triggers the editor (default dblclick)
     callback : function( data ) {
         // Callback that will be called once the editor is blurred
         if( data.content ) {
