@@ -25,7 +25,7 @@ $('#some-element').editable({
     touch : true, // Whether or not to support touch (default true)
     lineBreaks : true, // Whether or not to convert \n to <br /> (default true)
     toggleFontSize : true, // Whether or not it should be possible to change font size (default true),
-    closeOnError : false, // Whether or not pressing the enter key should close the editor (default false)
+    closeOnEnter : false, // Whether or not pressing the enter key should close the editor (default false)
     event : 'click', // The event that triggers the editor (default dblclick)
     callback : function( data ) {
         // Callback that will be called once the editor is blurred
