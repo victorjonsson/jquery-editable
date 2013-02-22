@@ -1,7 +1,7 @@
 {
     "name" : "editable",
     "title" : "jQuery Editable",
-    "description" : "This plugin makes it possible to edit the content of an element simply by double clicking on it.",
+    "description" : "This plugin makes it possible to edit the content of an element simply by double clicking on it. What sets this plugin aside from other similar plugins is that the editable area won't look like your plain old boring textarea** or input field. Instead, it will look as if you're editing the actually page",
     "keywords": [
         "form",
         "ui",
