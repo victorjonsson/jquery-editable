@@ -1,7 +1,7 @@
 # jquery.editable
 
 This plugin makes it possible to edit the content of an element simply by double clicking on it. What sets this plugin
-aside form the other similar plugins is that the editable area **won't look like your plain old boring textarea** or 
+aside from other similar plugins is that the editable area **won't look like your plain old boring textarea** or 
 input field. Instead, it will look as if you're editing the actually page.
 
 [Live example can be viewed here](http://victorjonsson.se/168/jquery-editable/?from=github)
