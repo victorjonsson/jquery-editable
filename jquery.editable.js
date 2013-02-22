@@ -4,10 +4,10 @@
 * @author Victor Jonsson (http://victorjonsson.se/)
 * @website https://github.com/victorjonsson/jquery-editable/
 * @license GPLv2 http://www.gnu.org/licenses/gpl-2.0.html
-* @version 1.2.3
+* @version 1.3.1
 * @donations http://victorjonsson.se/donations/
 */
-(function($) {
+(function($, window) {
 
     'use strict';
 
@@ -24,6 +24,7 @@
     IS_EDITING_ATTR = 'data-is-editing',
     DBL_TAP_EVENT = 'dbltap',
     SUPPORTS_TOUCH = 'ontouchend' in window,
+    TINYMCE_INSTALLED = 'tinyMCE' in window && typeof window.tinyMCE.init == 'function',
 
     // reference to old is function
     oldjQueryIs = $.fn.is,
@@ -67,6 +68,17 @@
     },
 
     /**
+     * @param {jQuery} $el
+     * @param {String} newText
+     */
+    resetElement = function($el, newText) {
+        $el.removeAttr('data-is-editing');
+        $el.html( newText );
+        $textArea.remove();
+    },
+
+
+    /**
      * Function creating editor
      */
     elementEditor = function($el, opts) {
@@ -95,59 +107,132 @@
             textareaStyle = document.defaultView.getComputedStyle($el.get(0), "").cssText;
         }
 
-        if( opts.toggleFontSize || opts.closeOnEnter ) {
-            $win.bind('keydown', opts, keyHandler);
+        /*
+          TINYMCE EDITOR
+         */
+        if( opts.tinyMCE !== false ) {
+            var id = 'editable-area-'+(new Date().getTime());
+            $textArea
+                .val(defaultText)
+                .appendTo($el)
+                .attr('id', id);
+
+            if( typeof opts.tinyMCE != 'object' )
+                opts.tinyMCE = {};
+
+            opts.tinyMCE.mode = 'exact';
+            opts.tinyMCE.elements = id;
+            opts.tinyMCE.width = $el.innerWidth();
+            opts.tinyMCE.height = $el.height() + 200;
+            opts.tinyMCE.theme_advanced_resize_vertical = true;
+
+            opts.tinyMCE.setup = function (ed) {
+                ed.onInit.add(function(editor, evt) {
+                    var editorWindow = editor.getWin();
+                    var hasPressedKey = false;
+                    var editorBlur = function() {
+
+                        var newText = $(editor.getDoc()).find('body').html();
+                        if( $(newText).get(0).nodeName == $el.get(0).nodeName ) {
+                            newText = $(newText).html();
+                        }
+
+                        // Update element and remove editor
+                        resetElement($el, newText);
+                        editor.remove();
+                        $textArea = false;
+                        $win.unbind('click', editorBlur);
+                        $currentlyEdited = false;
+
+                        // Run callback
+                        if( typeof opts.callback == 'function' ) {
+                            opts.callback({
+                                content : newText == defaultText || !hasPressedKey ? false : newText,
+                                fontSize : false,
+                                $el : $el
+                            });
+                        }
+                    };
+
+                    // Blur editor when user clicks outside the editor
+                    setTimeout(function() {
+                        $win.bind('click', editorBlur);
+                    }, 500);
+
+                    // Create a dummy textarea that will called upon when
+                    // programmatically interacting with the editor
+                    $textArea = $('<textarea></textarea>');
+                    $textArea.bind('blur', editorBlur);
+
+                    editorWindow.onkeydown = function() {
+                        hasPressedKey = true;
+                    };
+
+                    editorWindow.focus();
+                });
+            };
+
+            tinyMCE.init(opts.tinyMCE);
         }
-        $win.bind('keyup', adjustTextAreaHeight);
 
-        $textArea
-            .val(defaultText)
-            .blur(function() {
+        /*
+         TEXTAREA EDITOR
+         */
+        else {
 
-                $currentlyEdited = false;
-                
-                // Get new text and font size
-                var newText = $.trim( $textArea.val() ),
-                    newFontSize = $textArea.css('font-size');
-                if( opts.lineBreaks ) {
-                    newText = newText.replace(new RegExp('\n','g'), '<br />');
-                }
+            if( opts.toggleFontSize || opts.closeOnEnter ) {
+                $win.bind('keydown', opts, keyHandler);
+            }
+            $win.bind('keyup', adjustTextAreaHeight);
 
-                // Update element
-                $el.html( newText );
-                $el.removeAttr('data-is-editing');
-                if( newFontSize != defaultFontSize ) {
-                    $el.css('font-size', newFontSize);
-                }
+            $textArea
+                .val(defaultText)
+                .blur(function() {
 
-                // remove textarea and size toggles
-                $textArea.remove();
-                $win.unbind('keydown', keyHandler);
-                $win.unbind('keyup', adjustTextAreaHeight);
+                    $currentlyEdited = false;
 
-                // Run callback
-                if( typeof opts.callback == 'function' ) {
-                    opts.callback({
-                        content : newText == defaultText ? false : newText,
-                        fontSize : newFontSize == defaultFontSize ? false : newFontSize,
-                        $el : $el
-                    });
-                }
-            })
-            .attr('style', textareaStyle)
-            .appendTo($el)
-            .css({
-                margin: 0,
-                padding: 0,
-                height : elementHeight +'px',
-                overflow : 'hidden'
-            })
-            .focus()
-            .get(0).select();
+                    // Get new text and font size
+                    var newText = $.trim( $textArea.val() ),
+                        newFontSize = $textArea.css('font-size');
+                    if( opts.lineBreaks ) {
+                        newText = newText.replace(new RegExp('\n','g'), '<br />');
+                    }
+
+                    // Update element
+                    resetElement($el, newText);
+                    if( newFontSize != defaultFontSize ) {
+                        $el.css('font-size', newFontSize);
+                    }
+
+                    // remove textarea and size toggles
+                    $win.unbind('keydown', keyHandler);
+                    $win.unbind('keyup', adjustTextAreaHeight);
+
+                    // Run callback
+                    if( typeof opts.callback == 'function' ) {
+                        opts.callback({
+                            content : newText == defaultText ? false : newText,
+                            fontSize : newFontSize == defaultFontSize ? false : newFontSize,
+                            $el : $el
+                        });
+                    }
+                })
+                .attr('style', textareaStyle)
+                .appendTo($el)
+                .css({
+                    margin: 0,
+                    padding: 0,
+                    height : elementHeight +'px',
+                    overflow : 'hidden'
+                })
+                .focus()
+                .get(0).select();
 
             adjustTextAreaHeight();
 
-            $el.trigger('edit', [$textArea]);
+        }
+
+        $el.trigger('edit', [$textArea]);
     },
 
     /**
@@ -216,8 +301,14 @@
                 touch : true,
                 lineBreaks : true,
                 toggleFontSize : true,
-                closeOnEnter : false
+                closeOnEnter : false,
+                tinyMCE : false
             }, opts);
+
+            if( opts.tinyMCE !== false && !TINYMCE_INSTALLED ) {
+                console.warn('Trying to use tinyMCE as editor but id does not seem to be installed');
+                opts.tinyMCE = false;
+            }
 
             if( SUPPORTS_TOUCH && opts.touch ) {
                 opts.event = DBL_TAP_EVENT;
@@ -251,4 +342,4 @@
         return oldjQueryIs.apply(this, arguments);
     }
 
-})(jQuery);
+})(jQuery, window);

@@ -9,7 +9,8 @@ This plugin makes it possible to edit the content of an element simply by double
 Double click on an element and it turns into a textarea. The content of the element is now displayed in the textarea.
 When you're done editing all you have to do is to click some where outside the textarea and the content will
 be added to the DOM. You can toggle the size of the font by pressing the keys cmd + &uarr; or cmd + &darr; while editing the content 
-(ctrl-key instead of cmd if you're on windows).
+(ctrl-key instead of cmd if you're on windows). If you don't want to use a plain textarea as editor you can [integrate jQuery editable
+with tinyMCE](#tinymce-integration).
 
 
 #### Code examples
@@ -27,6 +28,7 @@ $('#some-element').editable({
     toggleFontSize : true, // Whether or not it should be possible to change font size (default true),
     closeOnEnter : false, // Whether or not pressing the enter key should close the editor (default false)
     event : 'click', // The event that triggers the editor (default dblclick)
+    tinyMCE : false, // Integrate with tinyMCE by settings this option to true or an object containing your tinyMCE configuration
     callback : function( data ) {
         // Callback that will be called once the editor is blurred
         if( data.content ) {
@@ -88,4 +90,29 @@ $('.editable-area').editable(function(data) {
       $('input[name="' +$(this).attr('data-input')+'_fontsize"]').val(data.fontSize);
   } 
 });
+```
+
+<h2 id="tinymce-integration">Integrate plugin with tinyMCE</h2>
+
+Since version 1.3.1 it's possible to integrate this plugin with [tinyMCE](http://www.tinymce.com/).
+
+```html
+<div id="my-editable">
+  <p>Lorem te ipsum...</p>
+</div>
+<script src="tinymce/jscript/tinymce.js"><script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="js/jquery.editable.min.js"></script>
+<script>
+  $('#my-ediable').editable({
+    tinyMCE : {
+        plugins : 'autolink,lists,spellchecker',
+        skin : 'o2k7'
+        // what ever tinyMCE configuration that you want
+    },
+    callback : function(data) {
+        // ...
+    }
+  });
+</script>
 ```
