@@ -38,7 +38,7 @@ $('#some-element').editable({
             // Content has changed...
         }
         if( data.fontSize ) {
-            // the font size is changed
+            // the font size has changed
         }
 
         // data.$el gives you a reference to the element that was edited
@@ -70,7 +70,7 @@ $('#some-element').editable('destroy');
 
 // Binding an event listener that's triggered when the
 // element gets edited
-$('#some-element').on('edit', function(event, $textArea) { }); 
+$('#some-element').on('edit', function(event, $editor) { }); 
 ```
 
 ## The callback function
