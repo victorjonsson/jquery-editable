@@ -1,6 +1,6 @@
 /*
 * jQuery plugin that makes elements editable
-* 
+*
 * @author Victor Jonsson (http://victorjonsson.se/)
 * @website https://github.com/victorjonsson/jquery-editable/
 * @license GPLv2 http://www.gnu.org/licenses/gpl-2.0.html
@@ -15,13 +15,14 @@
 
     // Reference to textarea
     $textArea = false,
-    
+
     // Reference to currently edit element
     $currentlyEdited = false,
 
     // Some constants
     EVENT_ATTR = 'data-edit-event',
     IS_EDITING_ATTR = 'data-is-editing',
+    EMPTY_ATTR = 'data-is-empty',
     DBL_TAP_EVENT = 'dbltap',
     SUPPORTS_TOUCH = 'ontouchend' in window,
     TINYMCE_INSTALLED = 'tinyMCE' in window && typeof window.tinyMCE.init == 'function',
@@ -71,9 +72,16 @@
      * @param {jQuery} $el
      * @param {String} newText
      */
-    resetElement = function($el, newText) {
+    resetElement = function($el, newText, emptyMessage) {
         $el.removeAttr('data-is-editing');
-        $el.html( newText );
+
+        if (newText.length == 0 && emptyMessage) {
+            $el.html(emptyMessage);
+            $el.attr(EMPTY_ATTR, 'empty');
+        } else {
+            $el.html( newText );
+            $el.removeAttr(EMPTY_ATTR);
+        }
         $textArea.remove();
     },
 
@@ -88,6 +96,11 @@
 
         $currentlyEdited = $el;
         $el.attr('data-is-editing', '1');
+
+        if ($el.is(':empty')) {
+            $el.removeAttr(EMPTY_ATTR);
+            $el.html('');
+        }
 
         var defaultText = $.trim( $el.html() ),
             defaultFontSize = $el.css('font-size'),
@@ -106,8 +119,8 @@
         if( navigator.userAgent.match(/webkit/i) !== null ) {
             textareaStyle = document.defaultView.getComputedStyle($el.get(0), "").cssText;
         }
-        
-        // The editor should always be static 
+
+        // The editor should always be static
         textareaStyle += 'position: static';
 
         /*
@@ -141,7 +154,7 @@
                         }
 
                         // Update element and remove editor
-                        resetElement($el, newText);
+                        resetElement($el, newText, opts.emptyMessage);
                         editor.remove();
                         $textArea = false;
                         $win.unbind('click', editorBlur);
@@ -202,7 +215,7 @@
                     }
 
                     // Update element
-                    resetElement($el, newText);
+                    resetElement($el, newText, opts.emptyMessage);
                     if( newFontSize != defaultFontSize ) {
                         $el.css('font-size', newFontSize);
                     }
@@ -250,7 +263,7 @@
             elementEditor($this, event.data);
         }
         else {
-            elementEditor($(this), event.data);            
+            elementEditor($(this), event.data);
         }
         return false;
     };
@@ -323,7 +336,15 @@
             }
 
             this.bind(opts.event, opts, editEvent);
-            this.attr(EVENT_ATTR, opts.event);            
+            this.attr(EVENT_ATTR, opts.event);
+
+            // If it is empty to start with, apply the empty message
+            if (this.html().length == 0 && opts.emptyMessage) {
+                this.html(opts.emptyMessage);
+                this.attr(EMPTY_ATTR, 'empty');
+            } else {
+                this.removeAttr(EMPTY_ATTR);
+            }
         }
 
         return this;
@@ -340,6 +361,8 @@
                 return this.attr(EVENT_ATTR) !== undefined;
             } else if( statement == ':editing' ) {
                 return this.attr(IS_EDITING_ATTR) !== undefined;
+            } else if( statement == ':empty' ) {
+                return this.attr(EMPTY_ATTR) !== undefined;
             }
         }
         return oldjQueryIs.apply(this, arguments);
