@@ -120,6 +120,7 @@
          */
         function makeThingsEditable() {
             $editables.editable({
+                emptyMessage : '<em>Please write something...</em>',
                 callback : function( data ) {
                     $info.hide();
                     $info.eq(0).show();

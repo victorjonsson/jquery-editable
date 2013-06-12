@@ -4,7 +4,7 @@
 * @author Victor Jonsson (http://victorjonsson.se/)
 * @website https://github.com/victorjonsson/jquery-editable/
 * @license GPLv2 http://www.gnu.org/licenses/gpl-2.0.html
-* @version 1.3.4
+* @version 1.3.5
 * @donations http://victorjonsson.se/donations/
 */
 (function($, window) {
@@ -73,7 +73,7 @@
      * @param {String} newText
      */
     resetElement = function($el, newText, emptyMessage) {
-        $el.removeAttr('data-is-editing');
+        $el.removeAttr(IS_EDITING_ATTR);
 
         if (newText.length == 0 && emptyMessage) {
             $el.html(emptyMessage);
@@ -95,7 +95,7 @@
             return;
 
         $currentlyEdited = $el;
-        $el.attr('data-is-editing', '1');
+        $el.attr(IS_EDITING_ATTR, '1');
 
         if ($el.is(':empty')) {
             $el.removeAttr(EMPTY_ATTR);
@@ -259,8 +259,7 @@
             // Not closing the currently open editor before opening a new
             // editor makes things go crazy
             $currentlyEdited.editable('close');
-            var $this = $(this);
-            elementEditor($this, event.data);
+            elementEditor($(this), event.data);
         }
         else {
             elementEditor($(this), event.data);
@@ -318,6 +317,7 @@
                 lineBreaks : true,
                 toggleFontSize : true,
                 closeOnEnter : false,
+                emptyMessage : false,
                 tinyMCE : false
             }, opts);
 

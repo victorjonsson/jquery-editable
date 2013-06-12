@@ -32,6 +32,7 @@ $('#some-element').editable({
     closeOnEnter : false, // Whether or not pressing the enter key should close the editor (default false)
     event : 'click', // The event that triggers the editor (default dblclick)
     tinyMCE : false, // Integrate with tinyMCE by settings this option to true or an object containing your tinyMCE configuration
+    emptyMessage : '<em>Please write something.</em>', // HTML that will be added to the editable element in case it gets empty (default false)
     callback : function( data ) {
         // Callback that will be called once the editor is blurred
         if( data.content ) {
