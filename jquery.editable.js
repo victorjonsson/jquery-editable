@@ -241,6 +241,7 @@
                     height : elementHeight +'px',
                     overflow : 'hidden'
                 })
+                .css(opts.editorStyle)
                 .focus()
                 .get(0).select();
 
@@ -318,7 +319,8 @@
                 toggleFontSize : true,
                 closeOnEnter : false,
                 emptyMessage : false,
-                tinyMCE : false
+                tinyMCE : false,
+                editorStyle : {}
             }, opts);
 
             if( opts.tinyMCE !== false && !TINYMCE_INSTALLED ) {
