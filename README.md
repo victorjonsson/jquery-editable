@@ -78,7 +78,7 @@ $('#some-element').on('edit', function(event, $editor) { });
 
 The first argument of the callback function is an object containing the following properties:
 
-- **text** — Either false or the new text if the text was changed (this text may contain HTML)
+- **content** — Either false or the new content if the content was changed (this may contain HTML)
 - **fontSize** — Either false or the new font size, if changed.
 - **$el** - Reference to the element (jQuery) that was edited
 
