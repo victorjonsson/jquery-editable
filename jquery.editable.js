@@ -207,9 +207,9 @@
                     
                     // Prevent focus out if the click was made on textArea.
                     if( $textArea.is(clickedElement) ) {
-                		$textArea.focus();
-                		return true;
-                	}
+                        $textArea.focus();
+                        return true;
+                    }
                 	
                     $currentlyEdited = false;
 
