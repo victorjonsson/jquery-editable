@@ -204,7 +204,13 @@
             $textArea
                 .val(defaultText)
                 .blur(function() {
-
+                    
+                    // Prevent focus out if the click was made on textArea.
+                    if( $textArea.is(clickedElement) ) {
+                		$textArea.focus();
+                		return true;
+                	}
+                	
                     $currentlyEdited = false;
 
                     // Get new text and font size
@@ -369,5 +375,11 @@
         }
         return oldjQueryIs.apply(this, arguments);
     }
+    
+    // The latest element clicked
+    var clickedElement;
+    $(document).mousedown(function(e) {
+        clickedElement = $(e.target);
+    });
 
 })(jQuery, window);
