@@ -4,7 +4,7 @@ This plugin makes it possible to edit the content of an element simply by double
 aside from other similar plugins is that the editable area **won't look like your plain old boring textarea** or 
 input field. Instead, it will look as if you're editing the actually page.
 
-[Live example can be viewed here](http://victorjonsson.se/168/jquery-editable/?from=github)
+[Live example can be viewed here](http://codepen.io/anon/pen/OMWJOY)
 
 ## How does it work?
 
