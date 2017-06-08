@@ -205,12 +205,6 @@
                 .val(defaultText)
                 .blur(function() {
                     
-                    // Prevent focus out if the click was made on textArea.
-                    if( $textArea.is(clickedElement) ) {
-                        $textArea.focus();
-                        return true;
-                    }
-                	
                     $currentlyEdited = false;
 
                     // Get new text and font size
@@ -262,7 +256,8 @@
      * Event listener
      */
     editEvent = function(event) {
-        if( $currentlyEdited !== false ) {
+    	
+        if( $currentlyEdited !== false && !$currentlyEdited.children("textarea").is(clickedElement)) {
             // Not closing the currently open editor before opening a new
             // editor makes things go crazy
             $currentlyEdited.editable('close');
@@ -374,7 +369,7 @@
             }
         }
         return oldjQueryIs.apply(this, arguments);
-    }
+    };
     
     // The latest element clicked
     var clickedElement;
