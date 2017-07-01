@@ -49,6 +49,10 @@
         if( e.keyCode == 13 && e.data.closeOnEnter ) {
             $currentlyEdited.editable('close');
         }
+	else if( e.keyCode == 27 ) {
+            $textArea.val($currentlyEdited.attr('orig-text'));
+            $currentlyEdited.editable('close');
+        }
         else if( e.data.toggleFontSize && (e.metaKey && (e.keyCode == 38 || e.keyCode == 40)) ) {
             var fontSize = parseInt($textArea.css('font-size'), 10);
             fontSize += e.keyCode == 40 ? -1 : 1;
@@ -109,6 +113,7 @@
                             'font-family: '+$el.css('font-family')+'; font-size: '+$el.css('font-size')+';'+
                             'font-weight: '+$el.css('font-weight')+';';
 
+        $el.attr('orig-text', defaultText);
         if( opts.lineBreaks ) {
             defaultText = defaultText.replace(/<br( |)(|\/)>/g, '\n');
         }
